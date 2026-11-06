@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Café do Centro (site de demonstração)</title>
+  <meta name="description" content="Site de demonstração de uma cafeteria fictícia.">
+  <style>
+    :root {
+      --creme: #f6eedc;
+      --creme-escuro: #ebdfc4;
+      --marrom: #5b3a29;
+      --marrom-claro: #8a5a3c;
+      --verde: #1f3d2e;
+      --verde-claro: #2f5a43;
+      --texto: #2b1d14;
+      --branco: #fffaf0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+    body {
+      font-family: Georgia, "Times New Roman", serif;
+      background: var(--creme);
+      color: var(--texto);
+      font-size: 18px;
+      line-height: 1.6;
+    }
+    h1, h2, h3 { line-height: 1.2; color: var(--verde); }
+    a { color: inherit; }
+    .container { width: 100%; max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+    section { padding: 56px 0; }
+    .aviso-demo {
+      background: var(--marrom);
+      color: var(--branco);
+      text-align: center;
+      font-size: 15px;
+      padding: 8px 12px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    /* Cabeçalho */
+    header {
+      background: var(--verde);
+      color: var(--branco);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 2px 8px rgba(0,0,0,.25);
+    }
+    .barra { display: flex; align-items: center; justify-content: space-between; min-height: 64px; }
+    .logo { font-size: 1.35rem; font-weight: bold; text-decoration: none; letter-spacing: .5px; }
+    .logo span { color: #e9c9a0; }
+    #botao-menu {
+      display: none;
+      background: transparent;
+      color: var(--branco);
+      border: 2px solid var(--branco);
+      border-radius: 10px;
+      font-size: 1rem;
+      padding: 10px 16px;
+      min-height: 48px;
+      cursor: pointer;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    nav ul { list-style: none; display: flex; gap: 6px; }
+    nav a {
+      display: block;
+      padding: 12px 14px;
+      text-decoration: none;
+      border-radius: 8px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 1rem;
+    }
+    nav a:hover, nav a:focus { background: var(--verde-claro); }
+
+    /* Início */
+    .inicio {
+      background: linear-gradient(135deg, var(--verde) 0%, var(--verde-claro) 100%);
+      color: var(--branco);
+      text-align: center;
+      padding: 72px 0;
+    }
+    .inicio h1 { color: var(--branco); font-size: 2.3rem; margin-bottom: 16px; }
+    .inicio p { font-size: 1.2rem; max-width: 560px; margin: 0 auto 28px; }
+    .botao {
+      display: inline-block;
+      background: #e9c9a0;
+      color: var(--texto);
+      border: none;
+      border-radius: 12px;
+      padding: 16px 28px;
+      min-height: 56px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    .botao:hover, .botao:focus { background: #f3dcba; }
+    .botao.escuro { background: var(--marrom); color: var(--branco); }
+    .botao.escuro:hover, .botao.escuro:focus { background: var(--marrom-claro); }
+
+    /* Sobre */
+    .sobre { background: var(--branco); }
+    .sobre .grade { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center; }
+    .sobre h2, .titulo-secao { font-size: 1.9rem; margin-bottom: 14px; }
+    .sobre p + p { margin-top: 12px; }
+    .ilustracao {
+      background: var(--creme-escuro);
+      border-radius: 20px;
+      padding: 16px;
+    }
+    .ilustracao svg { width: 100%; height: auto; display: block; }
+    .legenda { font-size: 14px; color: #5a4636; text-align: center; margin-top: 6px; font-family: Arial, Helvetica, sans-serif; }
+
+    /* Produtos */
+    .subtitulo { margin-bottom: 28px; max-width: 600px; }
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+    .card {
+      background: var(--branco);
+      border: 2px solid var(--creme-escuro);
+      border-radius: 18px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .card svg { width: 84px; height: 84px; }
+    .card h3 { font-size: 1.4rem; }
+    .preco { font-size: 1.5rem; font-weight: bold; color: var(--marrom); font-family: Arial, Helvetica, sans-serif; }
+    .tag {
+      align-self: flex-start;
+      background: var(--verde);
+      color: var(--branco);
+      font-size: 13px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    /* Galeria */
+    .galeria { background: var(--creme-escuro); }
+    .fotos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .foto { background: var(--branco); border-radius: 16px; padding: 12px; }
+    .foto svg { width: 100%; height: auto; display: block; border-radius: 10px; }
+
+    /* Contato */
+    .contato .caixa {
+      background: var(--branco);
+      border-radius: 20px;
+      padding: 28px;
+      border: 2px solid var(--creme-escuro);
+    }
+    .contato dl { display: grid; grid-template-columns: 140px 1fr; gap: 12px 16px; margin: 20px 0 24px; }
+    .contato dt { font-weight: bold; color: var(--verde); }
+    .aviso-fake {
+      background: #fff1c9;
+      border-left: 6px solid var(--marrom);
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    #resposta-demo {
+      margin-top: 16px;
+      padding: 14px 16px;
+      background: var(--verde);
+      color: var(--branco);
+      border-radius: 12px;
+      display: none;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    /* Rodapé */
+    footer {
+      background: var(--verde);
+      color: var(--branco);
+      text-align: center;
+      padding: 32px 0;
+      font-size: 16px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    footer p + p { margin-top: 6px; opacity: .9; }
+
+    /* Celular */
+    @media (max-width: 800px) {
+      body { font-size: 17px; }
+      section { padding: 44px 0; }
+      #botao-menu { display: block; }
+      nav { display: none; position: absolute; left: 0; right: 0; top: 100%; background: var(--verde); padding: 8px 20px 16px; }
+      nav.aberto { display: block; }
+      nav ul { flex-direction: column; }
+      nav a { padding: 16px 12px; font-size: 1.1rem; }
+      header .container { position: relative; }
+      .inicio { padding: 52px 0; }
+      .inicio h1 { font-size: 1.9rem; }
+      .sobre .grade, .cards { grid-template-columns: 1fr; }
+      .fotos { grid-template-columns: 1fr 1fr; }
+      .contato dl { grid-template-columns: 1fr; gap: 2px; }
+      .contato dd { margin-bottom: 12px; }
+      .botao { width: 100%; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="aviso-demo">Site de demonstração · Empresa fictícia · Nenhum dado é real</div>
+
+  <header>
+    <div class="container barra">
+      <a class="logo" href="#inicio">Café <span>do Centro</span></a>
+      <button id="botao-menu" aria-expanded="false" aria-controls="menu">Menu</button>
+      <nav id="menu" aria-label="Menu principal">
+        <ul>
+          <li><a href="#sobre">Sobre</a></li>
+          <li><a href="#produtos">Produtos</a></li>
+          <li><a href="#galeria">Galeria</a></li>
+          <li><a href="#contato">Contato</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="inicio" id="inicio">
+      <div class="container">
+        <h1>Um café quentinho para o seu dia começar bem</h1>
+        <p>Venha fazer uma pausa, sentir o cheiro de café fresco e se sentir em casa.</p>
+        <a class="botao" href="#produtos">Ver o cardápio</a>
+      </div>
+    </section>
+
+    <section class="sobre" id="sobre">
+      <div class="container grade">
+        <div>
+          <h2>Sobre o Café do Centro</h2>
+          <p>O Café do Centro é uma cafeteria imaginária, criada para este site de demonstração. Pense num lugar aconchegante, com mesas de madeira, música suave e aroma de café recém-coado.</p>
+          <p>Aqui o foco é simples: bebidas bem preparadas, lanches caseiros e um ambiente tranquilo para conversar, trabalhar ou só descansar.</p>
+        </div>
+        <div class="ilustracao">
+          <svg viewBox="0 0 300 220" role="img" aria-label="Ilustração de uma xícara de café com vapor">
+            <rect width="300" height="220" rx="14" fill="#ebdfc4"/>
+            <ellipse cx="150" cy="178" rx="105" ry="16" fill="#c9b48f"/>
+            <path d="M80 90 h140 v50 a50 50 0 0 1 -50 50 h-40 a50 50 0 0 1 -50 -50 z" fill="#1f3d2e"/>
+            <path d="M220 105 h14 a22 22 0 0 1 0 44 h-22" fill="none" stroke="#1f3d2e" stroke-width="12" stroke-linecap="round"/>
+            <ellipse cx="150" cy="90" rx="70" ry="12" fill="#5b3a29"/>
+            <path d="M120 70 q-12 -18 0 -34 q12 -16 0 -30" fill="none" stroke="#8a5a3c" stroke-width="6" stroke-linecap="round"/>
+            <path d="M155 70 q-12 -18 0 -34 q12 -16 0 -30" fill="none" stroke="#8a5a3c" stroke-width="6" stroke-linecap="round"/>
+            <path d="M190 70 q-12 -18 0 -34 q12 -16 0 -30" fill="none" stroke="#8a5a3c" stroke-width="6" stroke-linecap="round"/>
+          </svg>
+          <p class="legenda">Imagem ilustrativa</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="produtos">
+      <div class="container">
+        <h2 class="titulo-secao">Nossos produtos</h2>
+        <p class="subtitulo">Itens e valores abaixo são apenas <strong>exemplos</strong> para fins de demonstração.</p>
+        <div class="cards">
+          <article class="card">
+            <svg viewBox="0 0 100 100" role="img" aria-label="Ícone de xícara de café">
+              <circle cx="50" cy="50" r="48" fill="#ebdfc4"/>
+              <path d="M26 42 h42 v16 a16 16 0 0 1 -16 16 h-10 a16 16 0 0 1 -16 -16 z" fill="#1f3d2e"/>
+              <path d="M68 47 h5 a8 8 0 0 1 0 16 h-8" fill="none" stroke="#1f3d2e" stroke-width="4" stroke-linecap="round"/>
+              <path d="M40 34 q-5 -7 0 -12 M50 34 q-5 -7 0 -12 M60 34 q-5 -7 0 -12" fill="none" stroke="#8a5a3c" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+            <span class="tag">Preço de exemplo</span>
+            <h3>Café coado</h3>
+            <p>Grãos moídos na hora, servido bem quente.</p>
+            <p class="preco">R$ 6,00</p>
+          </article>
+
+          <article class="card">
+            <svg viewBox="0 0 100 100" role="img" aria-label="Ícone de fatia de bolo">
+              <circle cx="50" cy="50" r="48" fill="#ebdfc4"/>
+              <path d="M22 66 L78 66 L78 48 L22 58 Z" fill="#8a5a3c"/>
+              <path d="M22 58 L78 48 L70 36 L22 46 Z" fill="#fffaf0"/>
+              <path d="M22 46 L70 36 L78 48" fill="none" stroke="#5b3a29" stroke-width="3" stroke-linejoin="round"/>
+              <circle cx="58" cy="32" r="5" fill="#1f3d2e"/>
+              <rect x="20" y="66" width="60" height="6" rx="3" fill="#5b3a29"/>
+            </svg>
+            <span class="tag">Preço de exemplo</span>
+            <h3>Bolo caseiro</h3>
+            <p>Fatia macia, no estilo da casa da vovó.</p>
+            <p class="preco">R$ 9,00</p>
+          </article>
+
+          <article class="card">
+            <svg viewBox="0 0 100 100" role="img" aria-label="Ícone de sanduíche">
+              <circle cx="50" cy="50" r="48" fill="#ebdfc4"/>
+              <path d="M24 44 a26 16 0 0 1 52 0 z" fill="#c98a4b"/>
+              <path d="M22 48 q7 6 14 0 q7 6 14 0 q7 6 14 0 q7 6 14 0" fill="none" stroke="#2f5a43" stroke-width="5" stroke-linecap="round"/>
+              <rect x="24" y="56" width="52" height="7" rx="3" fill="#8a5a3c"/>
+              <path d="M24 66 h52 a0 0 0 0 1 0 0 a8 8 0 0 1 -8 8 h-36 a8 8 0 0 1 -8 -8 z" fill="#c98a4b"/>
+            </svg>
+            <span class="tag">Preço de exemplo</span>
+            <h3>Sanduíche natural</h3>
+            <p>Pão fresquinho com recheio leve e saboroso.</p>
+            <p class="preco">R$ 14,00</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="galeria" id="galeria">
+      <div class="container">
+        <h2 class="titulo-secao">Galeria</h2>
+        <p class="subtitulo">Ilustrações feitas para esta demonstração. Não são fotos de um lugar real.</p>
+        <div class="fotos">
+          <figure class="foto">
+            <svg viewBox="0 0 200 200" role="img" aria-label="Ilustração de grãos de café">
+              <rect width="200" height="200" fill="#5b3a29"/>
+              <g fill="#2b1d14">
+                <ellipse cx="60" cy="70" rx="28" ry="38" transform="rotate(-30 60 70)"/>
+                <ellipse cx="135" cy="85" rx="28" ry="38" transform="rotate(25 135 85)"/>
+                <ellipse cx="95" cy="145" rx="28" ry="38" transform="rotate(70 95 145)"/>
+              </g>
+              <g fill="none" stroke="#c9a37a" stroke-width="3" stroke-linecap="round">
+                <path d="M45 95 q20 -25 30 -50"/>
+                <path d="M120 110 q25 -15 30 -50"/>
+                <path d="M70 160 q25 5 50 -25"/>
+              </g>
+            </svg>
+            <figcaption class="legenda">Grãos de café · ilustrativa</figcaption>
+          </figure>
+
+          <figure class="foto">
+            <svg viewBox="0 0 200 200" role="img" aria-label="Ilustração de uma mesa com xícara">
+              <rect width="200" height="200" fill="#f6eedc"/>
+              <rect y="140" width="200" height="60" fill="#8a5a3c"/>
+              <rect y="136" width="200" height="8" fill="#5b3a29"/>
+              <path d="M70 90 h60 v22 a24 24 0 0 1 -24 24 h-12 a24 24 0 0 1 -24 -24 z" fill="#1f3d2e"/>
+              <path d="M130 98 h6 a10 10 0 0 1 0 20 h-8" fill="none" stroke="#1f3d2e" stroke-width="5" stroke-linecap="round"/>
+              <ellipse cx="100" cy="144" rx="44" ry="6" fill="#fffaf0"/>
+              <circle cx="40" cy="50" r="22" fill="#e9c9a0"/>
+            </svg>
+            <figcaption class="legenda">Mesa do café · ilustrativa</figcaption>
+          </figure>
+
+          <figure class="foto">
+            <svg viewBox="0 0 200 200" role="img" aria-label="Ilustração de um bolo inteiro">
+              <rect width="200" height="200" fill="#2f5a43"/>
+              <ellipse cx="100" cy="150" rx="70" ry="12" fill="#1f3d2e"/>
+              <rect x="45" y="95" width="110" height="52" rx="8" fill="#8a5a3c"/>
+              <path d="M45 100 q12 18 24 0 q12 18 24 0 q12 18 24 0 q12 18 24 0 q7 10 14 0 v-8 a8 8 0 0 0 -8 -8 h-94 a8 8 0 0 0 -8 8 z" fill="#fffaf0"/>
+              <circle cx="100" cy="80" r="8" fill="#e9c9a0"/>
+            </svg>
+            <figcaption class="legenda">Bolo da casa · ilustrativa</figcaption>
+          </figure>
+
+          <figure class="foto">
+            <svg viewBox="0 0 200 200" role="img" aria-label="Ilustração de uma planta em vaso">
+              <rect width="200" height="200" fill="#ebdfc4"/>
+              <path d="M70 130 h60 l-8 52 h-44 z" fill="#8a5a3c"/>
+              <path d="M100 130 q-4 -50 -40 -70 q-4 40 40 70 z" fill="#1f3d2e"/>
+              <path d="M100 130 q4 -60 42 -80 q8 50 -42 80 z" fill="#2f5a43"/>
+              <path d="M100 130 q0 -40 0 -80" fill="none" stroke="#1f3d2e" stroke-width="4" stroke-linecap="round"/>
+            </svg>
+            <figcaption class="legenda">Cantinho verde · ilustrativa</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="contato" id="contato">
+      <div class="container">
+        <div class="caixa">
+          <h2 class="titulo-secao">Endereço, horário e contato</h2>
+          <p class="aviso-fake"><strong>Atenção:</strong> todos os dados abaixo são <strong>fictícios</strong>. Este lugar não existe.</p>
+          <dl>
+            <dt>Endereço</dt>
+            <dd>Rua das Flores, 123, Centro, Cidade Exemplo (fictício)</dd>
+            <dt>Horário</dt>
+            <dd>Segunda a sábado, das 8h às 18h (fictício)</dd>
+            <dt>Telefone</dt>
+            <dd>(00) 0000-0000 (fictício)</dd>
+            <dt>E-mail</dt>
+            <dd>contato@exemplo.invalid (fictício)</dd>
+          </dl>
+          <button class="botao escuro" id="botao-demo" type="button">Fazer um pedido (demonstração)</button>
+          <div id="resposta-demo" role="status" aria-live="polite">
+            Este botão é apenas demonstrativo. Nenhuma mensagem foi enviada e nenhum dado foi coletado.
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p><strong>Café do Centro</strong> · Site de demonstração</p>
+      <p>Empresa, endereço, preços e imagens fictícios, feitos apenas para exemplo.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Menu para celular
+    var botaoMenu = document.getElementById('botao-menu');
+    var menu = document.getElementById('menu');
+
+    botaoMenu.addEventListener('click', function () {
+      var aberto = menu.classList.toggle('aberto');
+      botaoMenu.setAttribute('aria-expanded', aberto ? 'true' : 'false');
+    });
+
+    // Fecha o menu ao tocar em um link
+    menu.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', function () {
+        menu.classList.remove('aberto');
+        botaoMenu.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    // Botão demonstrativo: só mostra um aviso, não envia nada
+    var botaoDemo = document.getElementById('botao-demo');
+    var respostaDemo = document.getElementById('resposta-demo');
+
+    botaoDemo.addEventListener('click', function () {
+      respostaDemo.style.display = 'block';
+    });
+  </script>
+</body>
+  </html><!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Café do Centro (site de demonstração)</title>
+  <meta name="description" content="Site de demonstração de uma cafeteria fictícia.">
+  <style>
+    :root {
+      --creme: #f6eedc;
+      --creme-escuro: #ebdfc4;
+      --marrom: #5b3a29;
+      --marrom-claro: #8a5a3c;
+      --verde: #1f3d2e;
+      --verde-claro: #2f5a43;
+      --texto: #2b1d14;
+      --branco: #fffaf0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+    body {
+      font-family: Georgia, "Times New Roman", serif;
+      background: var(--creme);
+      color: var(--texto);
+      font-size: 18px;
+      line-height: 1.6;
+    }
+    h1, h2, h3 { line-height: 1.2; color: var(--verde); }
+    a { color: inherit; }
+    .container { width: 100%; max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+    section { padding: 56px 0; }
+    .aviso-demo {
+      background: var(--marrom);
+      color: var(--branco);
+      text-align: center;
+      font-size: 15px;
+      padding: 8px 12px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    /* Cabeçalho */
+    header {
+      background: var(--verde);
+      color: var(--branco);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 2px 8px rgba(0,0,0,.25);
+    }
+    .barra { display: flex; align-items: center; justify-content: space-between; min-height: 64px; }
+    .logo { font-size: 1.35rem; font-weight: bold; text-decoration: none; letter-spacing: .5px; }
+    .logo span { color: #e9c9a0; }
+    #botao-menu {
+      display: none;
+      background: transparent;
+      color: var(--branco);
+      border: 2px solid var(--branco);
+      border-radius: 10px;
+      font-size: 1rem;
+      padding: 10px 16px;
+      min-height: 48px;
+      cursor: pointer;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    nav ul { list-style: none; display: flex; gap: 6px; }
+    nav a {
+      display: block;
+      padding: 12px 14px;
+      text-decoration: none;
+      border-radius: 8px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 1rem;
+    }
+    nav a:hover, nav a:focus { background: var(--verde-claro); }
+
+    /* Início */
+    .inicio {
+      background: linear-gradient(135deg, var(--verde) 0%, var(--verde-claro) 100%);
+      color: var(--branco);
+      text-align: center;
+      padding: 72px 0;
+    }
+    .inicio h1 { color: var(--branco); font-size: 2.3rem; margin-bottom: 16px; }
+    .inicio p { font-size: 1.2rem; max-width: 560px; margin: 0 auto 28px; }
+    .botao {
+      display: inline-block;
+      background: #e9c9a0;
+      color: var(--texto);
+      border: none;
+      border-radius: 12px;
+      padding: 16px 28px;
+      min-height: 56px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    .botao:hover, .botao:focus { background: #f3dcba; }
+    .botao.escuro { background: var(--marrom); color: var(--branco); }
+    .botao.escuro:hover, .botao.escuro:focus { background: var(--marrom-claro); }
+
+    /* Sobre */
+    .sobre { background: var(--branco); }
+    .sobre .grade { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center; }
+    .sobre h2, .titulo-secao { font-size: 1.9rem; margin-bottom: 14px; }
+    .sobre p + p { margin-top: 12px; }
+    .ilustracao {
+      background: var(--creme-escuro);
+      border-radius: 20px;
+      padding: 16px;
+    }
+    .ilustracao svg { width: 100%; height: auto; display: block; }
+    .legenda { font-size: 14px; color: #5a4636; text-align: center; margin-top: 6px; font-family: Arial, Helvetica, sans-serif; }
+
+    /* Produtos */
+    .subtitulo { margin-bottom: 28px; max-width: 600px; }
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+    .card {
+      background: var(--branco);
+      border: 2px solid var(--creme-escuro);
+      border-radius: 18px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .card svg { width: 84px; height: 84px; }
+    .card h3 { font-size: 1.4rem; }
+    .preco { font-size: 1.5rem; font-weight: bold; color: var(--marrom); font-family: Arial, Helvetica, sans-serif; }
+    .tag {
+      align-self: flex-start;
+      background: var(--verde);
+      color: var(--branco);
+      font-size: 13px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    /* Galeria */
+    .galeria { background: var(--creme-escuro); }
+    .fotos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .foto { background: var(--branco); border-radius: 16px; padding: 12px; }
+    .foto svg { width: 100%; height: auto; display: block; border-radius: 10px; }
+
+    /* Contato */
+    .contato .caixa {
+      background: var(--branco);
+      border-radius: 20px;
+      padding: 28px;
+      border: 2px solid var(--creme-escuro);
+    }
+    .contato dl { display: grid; grid-template-columns: 140px 1fr; gap: 12px 16px; margin: 20px 0 24px; }
+    .contato dt { font-weight: bold; color: var(--verde); }
+    .aviso-fake {
+      background: #fff1c9;
+      border-left: 6px solid var(--marrom);
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    #resposta-demo {
+      margin-top: 16px;
+      padding: 14px 16px;
+      background: var(--verde);
+      color: var(--branco);
+      border-radius: 12px;
+      display: none;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    /* Rodapé */
+    footer {
+      background: var(--verde);
+      color: var(--branco);
+      text-align: center;
+      padding: 32px 0;
+      font-size: 16px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    footer p + p { margin-top: 6px; opacity: .9; }
+
+    /* Celular */
+    @media (max-width: 800px) {
+      body { font-size: 17px; }
+      section { padding: 44px 0; }
+      #botao-menu { display: block; }
+      nav { display: none; position: absolute; left: 0; right: 0; top: 100%; background: var(--verde); padding: 8px 20px 16px; }
+      nav.aberto { display: block; }
+      nav ul { flex-direction: column; }
+      nav a { padding: 16px 12px; font-size: 1.1rem; }
+      header .container { position: relative; }
+      .inicio { padding: 52px 0; }
+      .inicio h1 { font-size: 1.9rem; }
+      .sobre .grade, .cards { grid-template-columns: 1fr; }
+      .fotos { grid-template-columns: 1fr 1fr; }
+      .contato dl { grid-template-columns: 1fr; gap: 2px; }
+      .contato dd { margin-bottom: 12px; }
+      .botao { width: 100%; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="aviso-demo">Site de demonstração · Empresa fictícia · Nenhum dado é real</div>
+
+  <header>
+    <div class="container barra">
+      <a class="logo" href="#inicio">Café <span>do Centro</span></a>
+      <button id="botao-menu" aria-expanded="false" aria-controls="menu">Menu</button>
+      <nav id="menu" aria-label="Menu principal">
+        <ul>
+          <li><a href="#sobre">Sobre</a></li>
+          <li><a href="#produtos">Produtos</a></li>
+          <li><a href="#galeria">Galeria</a></li>
+          <li><a href="#contato">Contato</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="inicio" id="inicio">
+      <div class="container">
+        <h1>Um café quentinho para o seu dia começar bem</h1>
+        <p>Venha fazer uma pausa, sentir o cheiro de café fresco e se sentir em casa.</p>
+        <a class="botao" href="#produtos">Ver o cardápio</a>
+      </div>
+    </section>
+
+    <section class="sobre" id="sobre">
+      <div class="container grade">
+        <div>
+          <h2>Sobre o Café do Centro</h2>
+          <p>O Café do Centro é uma cafeteria imaginária, criada para este site de demonstração. Pense num lugar aconchegante, com mesas de madeira, música suave e aroma de café recém-coado.</p>
+          <p>Aqui o foco é simples: bebidas bem preparadas, lanches caseiros e um ambiente tranquilo para conversar, trabalhar ou só descansar.</p>
+        </div>
+        <div class="ilustracao">
+          <svg viewBox="0 0 300 220" role="img" aria-label="Ilustração de uma xícara de café com vapor">
+            <rect width="300" height="220" rx="14" fill="#ebdfc4"/>
+            <ellipse cx="150" cy="178" rx="105" ry="16" fill="#c9b48f"/>
+            <path d="M80 90 h140 v50 a50 50 0 0 1 -50 50 h-40 a50 50 0 0 1 -50 -50 z" fill="#1f3d2e"/>
+            <path d="M220 105 h14 a22 22 0 0 1 0 44 h-22" fill="none" stroke="#1f3d2e" stroke-width="12" stroke-linecap="round"/>
+            <ellipse cx="150" cy="90" rx="70" ry="12" fill="#5b3a29"/>
+            <path d="M120 70 q-12 -18 0 -34 q12 -16 0 -30" fill="none" stroke="#8a5a3c" stroke-width="6" stroke-linecap="round"/>
+            <path d="M155 70 q-12 -18 0 -34 q12 -16 0 -30" fill="none" stroke="#8a5a3c" stroke-width="6" stroke-linecap="round"/>
+            <path d="M190 70 q-12 -18 0 -34 q12 -16 0 -30" fill="none" stroke="#8a5a3c" stroke-width="6" stroke-linecap="round"/>
+          </svg>
+          <p class="legenda">Imagem ilustrativa</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="produtos">
+      <div class="container">
+        <h2 class="titulo-secao">Nossos produtos</h2>
+        <p class="subtitulo">Itens e valores abaixo são apenas <strong>exemplos</strong> para fins de demonstração.</p>
+        <div class="cards">
+          <article class="card">
+            <svg viewBox="0 0 100 100" role="img" aria-label="Ícone de xícara de café">
+              <circle cx="50" cy="50" r="48" fill="#ebdfc4"/>
+              <path d="M26 42 h42 v16 a16 16 0 0 1 -16 16 h-10 a16 16 0 0 1 -16 -16 z" fill="#1f3d2e"/>
+              <path d="M68 47 h5 a8 8 0 0 1 0 16 h-8" fill="none" stroke="#1f3d2e" stroke-width="4" stroke-linecap="round"/>
+              <path d="M40 34 q-5 -7 0 -12 M50 34 q-5 -7 0 -12 M60 34 q-5 -7 0 -12" fill="none" stroke="#8a5a3c" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+            <span class="tag">Preço de exemplo</span>
+            <h3>Café coado</h3>
+            <p>Grãos moídos na hora, servido bem quente.</p>
+            <p class="preco">R$ 6,00</p>
+          </article>
+
+          <article class="card">
+            <svg viewBox="0 0 100 100" role="img" aria-label="Ícone de fatia de bolo">
+              <circle cx="50" cy="50" r="48" fill="#ebdfc4"/>
+              <path d="M22 66 L78 66 L78 48 L22 58 Z" fill="#8a5a3c"/>
+              <path d="M22 58 L78 48 L70 36 L22 46 Z" fill="#fffaf0"/>
+              <path d="M22 46 L70 36 L78 48" fill="none" stroke="#5b3a29" stroke-width="3" stroke-linejoin="round"/>
+              <circle cx="58" cy="32" r="5" fill="#1f3d2e"/>
+              <rect x="20" y="66" width="60" height="6" rx="3" fill="#5b3a29"/>
+            </svg>
+            <span class="tag">Preço de exemplo</span>
+            <h3>Bolo caseiro</h3>
+            <p>Fatia macia, no estilo da casa da vovó.</p>
+            <p class="preco">R$ 9,00</p>
+          </article>
+
+          <article class="card">
+            <svg viewBox="0 0 100 100" role="img" aria-label="Ícone de sanduíche">
+              <circle cx="50" cy="50" r="48" fill="#ebdfc4"/>
+              <path d="M24 44 a26 16 0 0 1 52 0 z" fill="#c98a4b"/>
+              <path d="M22 48 q7 6 14 0 q7 6 14 0 q7 6 14 0 q7 6 14 0" fill="none" stroke="#2f5a43" stroke-width="5" stroke-linecap="round"/>
+              <rect x="24" y="56" width="52" height="7" rx="3" fill="#8a5a3c"/>
+              <path d="M24 66 h52 a0 0 0 0 1 0 0 a8 8 0 0 1 -8 8 h-36 a8 8 0 0 1 -8 -8 z" fill="#c98a4b"/>
+            </svg>
+            <span class="tag">Preço de exemplo</span>
+            <h3>Sanduíche natural</h3>
+            <p>Pão fresquinho com recheio leve e saboroso.</p>
+            <p class="preco">R$ 14,00</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="galeria" id="galeria">
+      <div class="container">
+        <h2 class="titulo-secao">Galeria</h2>
+        <p class="subtitulo">Ilustrações feitas para esta demonstração. Não são fotos de um lugar real.</p>
+        <div class="fotos">
+          <figure class="foto">
+            <svg viewBox="0 0 200 200" role="img" aria-label="Ilustração de grãos de café">
+              <rect width="200" height="200" fill="#5b3a29"/>
+              <g fill="#2b1d14">
+                <ellipse cx="60" cy="70" rx="28" ry="38" transform="rotate(-30 60 70)"/>
+                <ellipse cx="135" cy="85" rx="28" ry="38" transform="rotate(25 135 85)"/>
+                <ellipse cx="95" cy="145" rx="28" ry="38" transform="rotate(70 95 145)"/>
+              </g>
+              <g fill="none" stroke="#c9a37a" stroke-width="3" stroke-linecap="round">
+                <path d="M45 95 q20 -25 30 -50"/>
+                <path d="M120 110 q25 -15 30 -50"/>
+                <path d="M70 160 q25 5 50 -25"/>
+              </g>
+            </svg>
+            <figcaption class="legenda">Grãos de café · ilustrativa</figcaption>
+          </figure>
+
+          <figure class="foto">
+            <svg viewBox="0 0 200 200" role="img" aria-label="Ilustração de uma mesa com xícara">
+              <rect width="200" height="200" fill="#f6eedc"/>
+              <rect y="140" width="200" height="60" fill="#8a5a3c"/>
+              <rect y="136" width="200" height="8" fill="#5b3a29"/>
+              <path d="M70 90 h60 v22 a24 24 0 0 1 -24 24 h-12 a24 24 0 0 1 -24 -24 z" fill="#1f3d2e"/>
+              <path d="M130 98 h6 a10 10 0 0 1 0 20 h-8" fill="none" stroke="#1f3d2e" stroke-width="5" stroke-linecap="round"/>
+              <ellipse cx="100" cy="144" rx="44" ry="6" fill="#fffaf0"/>
+              <circle cx="40" cy="50" r="22" fill="#e9c9a0"/>
+            </svg>
+            <figcaption class="legenda">Mesa do café · ilustrativa</figcaption>
+          </figure>
+
+          <figure class="foto">
+            <svg viewBox="0 0 200 200" role="img" aria-label="Ilustração de um bolo inteiro">
+              <rect width="200" height="200" fill="#2f5a43"/>
+              <ellipse cx="100" cy="150" rx="70" ry="12" fill="#1f3d2e"/>
+              <rect x="45" y="95" width="110" height="52" rx="8" fill="#8a5a3c"/>
+              <path d="M45 100 q12 18 24 0 q12 18 24 0 q12 18 24 0 q12 18 24 0 q7 10 14 0 v-8 a8 8 0 0 0 -8 -8 h-94 a8 8 0 0 0 -8 8 z" fill="#fffaf0"/>
+              <circle cx="100" cy="80" r="8" fill="#e9c9a0"/>
+            </svg>
+            <figcaption class="legenda">Bolo da casa · ilustrativa</figcaption>
+          </figure>
+
+          <figure class="foto">
+            <svg viewBox="0 0 200 200" role="img" aria-label="Ilustração de uma planta em vaso">
+              <rect width="200" height="200" fill="#ebdfc4"/>
+              <path d="M70 130 h60 l-8 52 h-44 z" fill="#8a5a3c"/>
+              <path d="M100 130 q-4 -50 -40 -70 q-4 40 40 70 z" fill="#1f3d2e"/>
+              <path d="M100 130 q4 -60 42 -80 q8 50 -42 80 z" fill="#2f5a43"/>
+              <path d="M100 130 q0 -40 0 -80" fill="none" stroke="#1f3d2e" stroke-width="4" stroke-linecap="round"/>
+            </svg>
+            <figcaption class="legenda">Cantinho verde · ilustrativa</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="contato" id="contato">
+      <div class="container">
+        <div class="caixa">
+          <h2 class="titulo-secao">Endereço, horário e contato</h2>
+          <p class="aviso-fake"><strong>Atenção:</strong> todos os dados abaixo são <strong>fictícios</strong>. Este lugar não existe.</p>
+          <dl>
+            <dt>Endereço</dt>
+            <dd>Rua das Flores, 123, Centro, Cidade Exemplo (fictício)</dd>
+            <dt>Horário</dt>
+            <dd>Segunda a sábado, das 8h às 18h (fictício)</dd>
+            <dt>Telefone</dt>
+            <dd>(00) 0000-0000 (fictício)</dd>
+            <dt>E-mail</dt>
+            <dd>contato@exemplo.invalid (fictício)</dd>
+          </dl>
+          <button class="botao escuro" id="botao-demo" type="button">Fazer um pedido (demonstração)</button>
+          <div id="resposta-demo" role="status" aria-live="polite">
+            Este botão é apenas demonstrativo. Nenhuma mensagem foi enviada e nenhum dado foi coletado.
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p><strong>Café do Centro</strong> · Site de demonstração</p>
+      <p>Empresa, endereço, preços e imagens fictícios, feitos apenas para exemplo.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Menu para celular
+    var botaoMenu = document.getElementById('botao-menu');
+    var menu = document.getElementById('menu');
+
+    botaoMenu.addEventListener('click', function () {
+      var aberto = menu.classList.toggle('aberto');
+      botaoMenu.setAttribute('aria-expanded', aberto ? 'true' : 'false');
+    });
+
+    // Fecha o menu ao tocar em um link
+    menu.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', function () {
+        menu.classList.remove('aberto');
+        botaoMenu.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    // Botão demonstrativo: só mostra um aviso, não envia nada
+    var botaoDemo = document.getElementById('botao-demo');
+    var respostaDemo = document.getElementById('resposta-demo');
+
+    botaoDemo.addEventListener('click', function () {
+      respostaDemo.style.display = 'block';
+    });
+  </script>
+</body>
+                </html>
